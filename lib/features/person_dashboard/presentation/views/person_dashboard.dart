@@ -35,15 +35,8 @@ class PersonDashboardView extends StatelessWidget {
                 Expanded(
                   child: ListView.separated(
                       itemBuilder: (context, index) {
-                        return InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PersonDetails(
-                                        person: cubit.displayedItems![index],
-                                      )));
-                            },
-                            child: PersonItem(
-                                person: cubit.displayedItems![index]));
+                        return PersonItem(
+                            person: cubit.displayedItems![index]);
                       },
                       separatorBuilder: (context, index) {
                         return const Gap(15);

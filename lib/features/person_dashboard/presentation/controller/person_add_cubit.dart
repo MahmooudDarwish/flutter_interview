@@ -9,12 +9,16 @@ import 'package:flutter_interview/features/person_dashboard/domain/model/person.
 import 'package:flutter_interview/features/person_dashboard/domain/use_case/add_person_use_case.dart';
 import 'package:flutter_interview/features/person_dashboard/presentation/views/country_selector.dart';
 import 'package:flutter_interview/features/person_dashboard/presentation/widgets/pagination_widget.dart';
+import 'package:number_paginator/number_paginator.dart';
 
 part 'person_add_state.dart';
 
 class PersonAddCubit extends Cubit<PersonAddState>
     with PaginationMixin<String> {
   final AddPersonUseCase addPersonUseCase;
+  final NumberPaginatorController numberPaginatorController =
+      NumberPaginatorController();
+
   PersonAddCubit(this.addPersonUseCase) : super(PersonAddInitial()) {
     initialPage = 0;
     itemsPerPage = 4;
@@ -126,8 +130,6 @@ class PersonAddCubit extends Cubit<PersonAddState>
     countryController.dispose();
     dateController.dispose();
     searchController.dispose();
-    numberPaginatorController.dispose();
     super.close();
   }
-
 }

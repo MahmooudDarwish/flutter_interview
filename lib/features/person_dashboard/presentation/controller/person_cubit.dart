@@ -11,7 +11,7 @@ part 'person_state.dart';
 class PersonCubit extends Cubit<PersonState> with PaginationMixin<Person> {
   final GetAllPersonUseCase getAllPersonUseCase;
 
-  NumberPaginatorController numberPaginatorController =
+  final NumberPaginatorController numberPaginatorController =
       NumberPaginatorController();
 
   PersonCubit(this.getAllPersonUseCase) : super(PersonInitial()) {
@@ -37,14 +37,26 @@ class PersonCubit extends Cubit<PersonState> with PaginationMixin<Person> {
   }
 
   @override
-  void defineTotalPageNum({required List<Person> items}) {
-    totalPage = (items.length / itemsPerPage).ceil();
-    displayedItems = getDisplayedList(initialPage);
+  void goToPage(
+      {required NumberPaginatorController controller, required int page}) {
+    super.goToPage(controller: controller, page: page);
+    emit(PaginationState());
+  }
+
+  @override
+  void goToFirstPage({required NumberPaginatorController controller}) {
+    super.goToFirstPage(controller: controller);
+    emit(PaginationState());
+  }
+
+  @override
+  void goToLastPage({required NumberPaginatorController controller}) {
+    super.goToLastPage(controller: controller);
+    emit(PaginationState());
   }
 
   @override
   Future<void> close() async {
-    numberPaginatorController.dispose();
     super.close();
   }
 }
