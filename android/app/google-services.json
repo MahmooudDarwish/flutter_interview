@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1012556906053",
+    "firebase_url": "https://interview-fbd3a-default-rtdb.firebaseio.com",
+    "project_id": "interview-fbd3a",
+    "storage_bucket": "interview-fbd3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012556906053:android:a595150c0bfb586c9ced2c",
+        "android_client_info": {
+          "package_name": "com.example.flutter_interview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr1vStAYOIEKh2vFt4AHZ28ci24_vzh74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
