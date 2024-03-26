@@ -3,31 +3,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_interview/core/services/service_locator.dart';
 import 'package:flutter_interview/features/person_dashboard/domain/model/person.dart';
 import 'package:flutter_interview/features/person_dashboard/domain/use_case/get_all_person_use_case.dart';
-import 'package:flutter_interview/features/person_dashboard/presentation/widgets/pagination_widget.dart';
-import 'package:number_paginator/number_paginator.dart';
 
 part 'person_state.dart';
 
-class PersonCubit extends Cubit<PersonState> with PaginationMixin<Person> {
+class PersonCubit extends Cubit<PersonState> {
   final GetAllPersonUseCase getAllPersonUseCase;
 
-  final NumberPaginatorController numberPaginatorController =
-      NumberPaginatorController();
-
-  PersonCubit(this.getAllPersonUseCase) : super(PersonInitial()) {
-    initialPage = 0;
-    itemsPerPage = 2;
-  }
+  PersonCubit(this.getAllPersonUseCase) : super(PersonInitial());
   static PersonCubit get(context) => BlocProvider.of<PersonCubit>(context);
 
   List<Person> persons = [];
+
+  late int totalPage;
+  static const int initialPage = 0;
+  List<Person>? displayedItems;
+  final int itemsPerPage = 2;
 
   void getAllPerson() async {
     emit(GetAllPersonLoadingState());
     try {
       persons = await getAllPersonUseCase.getAllPerson();
-      items = persons;
-      defineTotalPageNum(items: persons);
+      _defineTotalPageNum();
       logger.i("Persons got successfully");
       emit(GetAllPersonSuccessState());
     } catch (error) {
@@ -36,27 +32,28 @@ class PersonCubit extends Cubit<PersonState> with PaginationMixin<Person> {
     }
   }
 
-  @override
-  void goToPage(
-      {required NumberPaginatorController controller, required int page}) {
-    super.goToPage(controller: controller, page: page);
+  int? selectedPageNumber = initialPage + 1;
+  changePage(int pageNumber) {
+    selectedPageNumber = pageNumber;
+    displayedItems = _getDisplayedList(pageNumber - 1);
     emit(PaginationState());
   }
 
-  @override
-  void goToFirstPage({required NumberPaginatorController controller}) {
-    super.goToFirstPage(controller: controller);
-    emit(PaginationState());
+  void _defineTotalPageNum() {
+    totalPage = (persons.length / itemsPerPage).ceil();
+
+    displayedItems = _getDisplayedList(initialPage);
   }
 
-  @override
-  void goToLastPage({required NumberPaginatorController controller}) {
-    super.goToLastPage(controller: controller);
-    emit(PaginationState());
-  }
+  List<Person> _getDisplayedList(int page) {
+    final startIndex = (page) * itemsPerPage;
+    final endIndex = startIndex + itemsPerPage;
 
-  @override
-  Future<void> close() async {
-    super.close();
+    final effectiveEndIndex =
+        endIndex > persons.length ? persons.length : endIndex;
+
+    List<Person> tempItems = persons.sublist(startIndex, effectiveEndIndex);
+
+    return tempItems;
   }
 }

@@ -8,28 +8,22 @@ import 'package:flutter_interview/core/util/util_functions.dart';
 import 'package:flutter_interview/features/person_dashboard/domain/model/person.dart';
 import 'package:flutter_interview/features/person_dashboard/domain/use_case/add_person_use_case.dart';
 import 'package:flutter_interview/features/person_dashboard/presentation/views/country_selector.dart';
-import 'package:flutter_interview/features/person_dashboard/presentation/widgets/pagination_widget.dart';
-import 'package:number_paginator/number_paginator.dart';
 
 part 'person_add_state.dart';
 
-class PersonAddCubit extends Cubit<PersonAddState>
-    with PaginationMixin<String> {
+class PersonAddCubit extends Cubit<PersonAddState> {
   final AddPersonUseCase addPersonUseCase;
-  final NumberPaginatorController numberPaginatorController =
-      NumberPaginatorController();
 
-  PersonAddCubit(this.addPersonUseCase) : super(PersonAddInitial()) {
-    initialPage = 0;
-    itemsPerPage = 4;
-    items = StringConstance.countries;
-    displayedItems = getDisplayedList(initialPage);
-    defineTotalPageNum(items: StringConstance.countries);
-  }
+  PersonAddCubit(this.addPersonUseCase) : super(PersonAddInitial());
 
   static PersonAddCubit get(context) => BlocProvider.of(context);
 
   List<String> filteredCountries = [];
+
+  static const int initialPage = 0;
+  static const int itemsPerPage = 4;
+  int totalPage = (StringConstance.countries.length / itemsPerPage).ceil();
+  late List<String>? displayedItems = _getDisplayedList(initialPage);
 
   DateTime? selectedDate;
   Country? selectedCountry;
@@ -120,6 +114,33 @@ class PersonAddCubit extends Cubit<PersonAddState>
   Future<void> selectCountry(String country) async {
     pickedCountry = country;
     emit(SelectCountryState());
+  }
+
+  int selectedPageNumber = initialPage + 1;
+
+  changePage(int pageNumber) {
+    selectedPageNumber = pageNumber;
+    displayedItems = _getDisplayedList(pageNumber - 1);
+    emit(PaginationState());
+  }
+
+  List<String> _getDisplayedList(int page) {
+    final startIndex = page * itemsPerPage;
+    final endIndex = startIndex + itemsPerPage;
+
+    final effectiveEndIndex = endIndex > StringConstance.countries.length
+        ? StringConstance.countries.length
+        : endIndex;
+
+    List<String> tempItems =
+        StringConstance.countries.sublist(startIndex, effectiveEndIndex);
+
+    if (endIndex > StringConstance.countries.length) {
+      tempItems = StringConstance.countries
+          .sublist(startIndex, StringConstance.countries.length);
+    }
+
+    return tempItems;
   }
 
   @override

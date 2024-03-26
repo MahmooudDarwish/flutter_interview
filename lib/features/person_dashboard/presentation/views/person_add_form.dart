@@ -15,8 +15,9 @@ class PersonAddForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<PersonAddCubit>(),
-      child: const Scaffold(
-        body: PersonAddFormView(),
+      child: Scaffold(
+        appBar: AppBar(),
+        body: const PersonAddFormView(),
       ),
     );
   }
@@ -79,7 +80,7 @@ class PersonAddFormView extends StatelessWidget {
                     label: StringConstance.nationalIdLabel,
                     controller: cubit.countryController,
                     prefix: NationalityIcon(
-                      countryName: cubit.selectedCountry?.name ,
+                      countryName: cubit.selectedCountry?.name,
                     ),
                     prefixPressed: () => cubit.pickCountry(context),
                     type: TextInputType.number,

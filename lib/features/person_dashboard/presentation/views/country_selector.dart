@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_interview/features/person_dashboard/presentation/controller/person_add_cubit.dart';
 import 'package:flutter_interview/features/person_dashboard/presentation/widgets/country_builder_widget.dart';
-import 'package:flutter_interview/features/person_dashboard/presentation/widgets/pagination_widget.dart';
+import 'package:number_pagination/number_pagination.dart';
 
 class CountrySelector extends StatelessWidget {
   final PersonAddCubit personAddCubit;
@@ -20,6 +20,7 @@ class CountrySelector extends StatelessWidget {
       bloc: personAddCubit,
       builder: (context, state) {
         return Scaffold(
+          appBar: AppBar(),
           body: Column(
             children: [
               Padding(
@@ -47,8 +48,17 @@ class CountrySelector extends StatelessWidget {
                 countries: personAddCubit.displayedItems!,
                 personAddCubit: personAddCubit,
               ),
-              PaginationWidget(
-                cubit: personAddCubit,
+              NumberPagination(
+                onPageChanged: (int pageNumber) {
+                  //do somthing for selected page
+                  personAddCubit.changePage(pageNumber);
+                },
+                threshold: personAddCubit.totalPage,
+                pageTotal: personAddCubit.totalPage,
+                pageInit: personAddCubit
+                    .selectedPageNumber, // picked number when init page
+                iconToFirst: const Icon(Icons.keyboard_double_arrow_left),
+                iconToLast: const Icon(Icons.keyboard_double_arrow_right),
               ),
             ],
           ),
